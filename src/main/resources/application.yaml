@@ -1,0 +1,228 @@
+spring:
+  application:
+    name: kuaipiao
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://127.0.0.1:5432/kuaipiao}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:nimda}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 60000
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000
+
+  mail:
+    host: ${MAIL_HOST:smtp.resend.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  server:
+    port: ${PORT:8080}
+    servlet:
+      context-path: /api/v1
+    error:
+      include-message: always
+      include-stacktrace: on_param
+
+  jwt:
+    secret: ${JWT_SECRET}
+    issuer: kuaipiao
+    audience: kuaipiao-api
+    expiration: 86400000
+
+  api:
+    cookie:
+      secure: ${COOKIE_SECURE:true}
+    session:
+      max-age: 2592000
+
+  resend:
+    api-key: ${RESEND_API_KEY:}
+    from-email: ${RESEND_FROM_EMAIL:onboarding@resend.dev}
+    from-name: Kuaipiao
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      base-url: https://api.openai.com/v1
+      model: gpt-4
+      timeout-ms: 2500
+
+    deepseek:
+      api-key: ${DEEPSEEK_API_KEY:}
+      base-url: https://api.deepseek.com/v1
+      model: deepseek-chat
+      timeout-ms: 3000
+
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY:}
+      base-url: https://api.anthropic.com/v1
+      model: claude-3-sonnet-20240229
+      timeout-ms: 4000
+
+    google:
+      api-key: ${GOOGLE_API_KEY:}
+      base-url: https://vision.googleapis.com
+      gemini-base-url: https://generativelanguage.googleapis.com
+      timeout-ms: 5000
+
+  logging:
+    level:
+      root: INFO
+      org.xiaotianqi.kuaipiao: DEBUG
+      org.springframework.security: DEBUG
+    pattern:
+      console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+  web:
+    error:
+      include-message: always
+      include-binding-errors: always
+# Scalar Configuration
+scalar:
+  # Enable/Disable Scalar
+  enabled: true
+
+  # Custom route for the API reference (default: /scalar)
+  path: /api-docs
+
+  # Page Title
+  pageTitle: Kuaipiao API Documentation
+
+  # OpenAPI specification URL (SpringDoc generates it automatically)
+  url: /v1/api-docs
+
+  # Theme and layout settings
+  theme: moon
+  layout: modern
+  darkMode: true
+  hideDarkModeToggle: false
+
+  # UI Settings
+  showSidebar: true
+  hideModels: false
+  hideTestRequestButton: false
+  hideSearch: false
+  defaultOpenAllTags: false
+  expandAllModelSections: false
+  expandAllResponses: false
+  showOperationId: true
+  hideClientButton: false
+
+  # Font settings
+  withDefaultFonts: true
+  favicon: /favicon.svg
+
+  # Default HTTP client for code examples
+  defaultHttpClient:
+    target: shell
+    client: curl
+
+  # Base URL to prefix relative OpenAPI server URLs
+  baseServerUrl: https://api.kuaipiao.com
+
+  # Persist authentication in localStorage (DO NOT use in production with real credentials)
+  persistAuth: false
+
+  # Telemetry
+  telemetry: true
+
+  # Sort required properties first
+  orderRequiredPropertiesFirst: true
+
+  # Server configuration
+  servers:
+    - url: https://api.kuaipiao.com
+      description: Production Server
+    - url: https://staging.kuaipiao.com
+      description: Staging Server
+    - url: http://localhost:8080
+      description: Local Development Server
+
+  # Multiple OpenAPI documents
+  sources:
+    - url: /v1/api-docs
+      title: Kuaipiao API v1
+      slug: v1
+      default: true
+
+  # Authentication configuration (for development/testing only)
+  # NEVER use real credentials in production
+  authentication:
+    preferredSecurityScheme: BearerAuth
+    http:
+      BearerAuth:
+        token: ""
+    apiKey:
+      ApiKey:
+        name: X-API-Key
+        value: ""
+    oauth2:
+      OAuth2:
+        flows:
+          authorizationCode:
+            clientId: ""
+            clientSecret: ""
+            authorizationUrl: https://auth.kuaipiao.com/oauth2/authorize
+            tokenUrl: https://auth.kuaipiao.com/oauth2/token
+            pkce: sha256
+            selectedScopes:
+              - read
+              - write
+        defaultScopes:
+          - read
+
+# SpringDoc OpenAPI configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    enabled: false
+  show-actuator: true
+
+# Actuator Configuration (optional)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,scalar
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# Security settings
+server:
+  port: 8080
